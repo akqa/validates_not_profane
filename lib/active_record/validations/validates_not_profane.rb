@@ -87,8 +87,7 @@ module ActiveRecord
             else
               Profanalyzer.check_all = true
             end
-            puts "\n"
-            puts "attr_name: #{attr_name}, config: "+configuration.inspect
+
             record.errors.add(attr_name, configuration[:message]) if addName && Profanalyzer.profane?(value)
             record.errors.add_to_base(configuration[:message])    if !addName && Profanalyzer.profane?(value)
             
