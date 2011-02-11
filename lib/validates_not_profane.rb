@@ -6,6 +6,10 @@ module ActiveModel
     class ProfanityValidator < ActiveModel::EachValidator
       DEFAULT_TOLERANCE = 2
 
+      def initialize(options)
+        super(options.reverse_merge(:message => "contains profanity"))
+      end
+
       def validate_each(record, attribute, value)
         if options.has_key?(:tolerance)
           Profanalyzer.tolerance = options[:tolerance]
