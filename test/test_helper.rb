@@ -1,38 +1,34 @@
-ENV['RAILS_ENV'] = 'test'
-ENV['RAILS_ROOT'] ||= File.dirname(__FILE__) + '/../../../..'
-
+require 'rubygems'
+require 'bundler/setup'
+require 'validates_not_profane'
 require 'test/unit'
-require File.expand_path(File.join(ENV['RAILS_ROOT'], 'config/environment.rb'))
 
-def load_schema
-  config = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))
-  ActiveRecord::Base.logger = Logger.new(File.dirname(__FILE__) + "/debug.log")
-
-  db_adapter = ENV['DB']
-
-  # no db passed, try one of these fine config-free DBs before bombing.
-  db_adapter ||=
-    begin
-      require 'rubygems'
-      require 'sqlite'
-      'sqlite'
-    rescue MissingSourceFile
-      begin
-        require 'sqlite3'
-        'sqlite3'
-      rescue MissingSourceFile
-      end
-    end
-
-  if db_adapter.nil?
-    raise "No DB Adapter selected. Pass the DB= option to pick one, or install Sqlite or Sqlite3."
+class Model
+  def initialize(atts)
+    atts.each { |k,v| send("#{k}=", v) }
   end
-
-  ActiveRecord::Base.establish_connection(config[db_adapter])
-  load(File.dirname(__FILE__) + "/schema.rb")
-  require File.dirname(__FILE__) + '/../init.rb'
 end
 
-def assert_not_valid record
-  assert_block {!(record.valid?)}
+class User < Model
+  attr_accessor :name, :bio
+  include ActiveModel::Validations
+  validates_not_profane :name
+  validates_not_profane :bio, :tolerance => 5
+end
+
+class Post < Model
+  attr_accessor :subject, :post
+  include ActiveModel::Validations
+  validates_not_profane :subject, :racist => true
+  validates_not_profane :post,    :sexual => true
+end
+
+class Test::Unit::TestCase
+  def assert_valid(record)
+    assert_block { record.valid? }
+  end
+
+  def assert_not_valid(record)
+    assert_block { !record.valid? }
+  end
 end

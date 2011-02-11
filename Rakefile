@@ -1,4 +1,6 @@
-require 'rake'
+require 'bundler'
+Bundler::GemHelper.install_tasks
+
 require 'rake/testtask'
 require 'rake/rdoctask'
 
@@ -7,7 +9,7 @@ task :default => :test
 
 desc 'Test the validates_not_profane plugin.'
 Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
+  t.libs << 'test'
   t.pattern = 'test/**/*_test.rb'
   t.verbose = true
 end
