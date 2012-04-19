@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "validates_not_profane"
 
-  s.add_dependency "profanalyzer", "~> 1.0"
+  s.add_dependency "profanalyzer", "~> 1.2"
   s.add_dependency "activemodel", "~> 3.0"
 
   s.files         = `git ls-files`.split("\n")
